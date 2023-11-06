@@ -1,0 +1,111 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##Non-Recursive (Iterative) Fibonacci Calculation
+# def fibonacci_iterative(n):
+#     if n <= 0:
+#         return 0
+#     elif n == 1:
+#         return 1
+    
+#     fib = [0, 1]
+#     for i in range(2, n + 1):
+#         fib.append(fib[i - 1] + fib[i - 2])
+    
+#     return fib[n]
+
+##Recursive Fibonacci Calculation
+# def fibonacci_recursive(n):
+#     if n <= 0:
+#         return 0
+#     elif n == 1:
+#         return 1
+#     else:
+#         return fibonacci_recursive(n - 1) + fibonacci_recursive(n - 2)
+    
+def fibonacci_non_recursive(n):
+    fib = [0, 1] + [0] * (n-1)
+    for i in range(2, n+1):
+        fib[i] = fib[i-1] + fib[i-2]
+    print(fib)
+    return fib[n]
+
+def print_fibonacci_recursive(n, a=0, b=1):
+    if n > 0:
+        print(a)
+        print_fibonacci_recursive(n-1, b, a+b)
+
+
+##Input from the user
+n = int(input("Enter the value of n: "))
+# method = input("Enter 'i' for iterative or 'r' for recursive method: ")
+
+# if method == 'i':
+#     # result = fibonacci_iterative(n)
+#     print(f"Fibonacci({n}) (Iterative) =", result)
+# elif method == 'r':
+#     result = fibonacci_recursive(n)
+#     print(f"Fibonacci({n}) (Recursive) =", result)
+# else:
+#     print("Invalid method choice. Enter 'i' for iterative or 'r' for recursive.")
+    
+print(fibonacci_non_recursive(n-1))
+print_fibonacci_recursive(n)
+
+------------------
+
+Iterative:
+Time Complexity: O(n)
+Space Complexity: O(n)
+In this method, a list of size n is used to store the Fibonacci numbers, and a loop iterates from 2 to n. The time complexity is O(n) because each Fibonacci number is computed once and stored in the list. The space complexity is also O(n) due to the list used to store the Fibonacci numbers.
+
+
+recursive
+
+Time Complexity: O(2^n) (exponential)
+Space Complexity: O(n) (due to the recursion stack)
+This is a traditional recursive implementation of Fibonacci. The time complexity is exponential because the function makes two recursive calls for each input n. As a result, it has a very high time complexity, making it inefficient for larger values of n. The space complexity is O(n) due to the space required for the recursive call stack.
+
+The provided fibonacci_non_recursive function is more efficient in terms of time complexity and is a better choice for large values of n compared to the recursive version. However, for even more efficient implementations, you can use memoization or matrix exponentiation techniques to reduce the time complexity to O(log(n)).

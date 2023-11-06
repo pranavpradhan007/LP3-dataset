@@ -1,0 +1,98 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class Item:
+	def __init__(self, profit, weight):
+		self.profit = profit
+		self.weight = weight
+def cmp(a):
+    return a.profit/a.weight
+def fractionalKnapsack(W, arr):
+
+	# Sorting Item on basis of ratio
+	arr.sort(key=lambda x:(x.profit/x.weight), reverse=True) 
+
+	# Result(value in Knapsack)
+	finalvalue = 0.0
+
+	# Looping through all Items
+	for item in arr:
+
+        # If adding Item won't overflow, 
+		# add it completely
+		if item.weight <= W:
+			W -= item.weight
+			finalvalue += item.profit
+
+		# If we can't add current Item, 
+		# add fractional part of it
+		else:
+			finalvalue += item.profit * W / item.weight
+			break
+	
+	# Returning final value
+	return finalvalue
+
+# Driver Code
+if __name__ == "__main__":
+	W = 20
+	arr = [Item(20, 6), Item(30, 13), Item(15, 5), Item(25, 10), Item(10, 3)]
+
+	# Function call
+	max_val = fractionalKnapsack(W, arr)
+	print(max_val)
+
+--------------------
+
+The provided code implements the Fractional Knapsack problem, which involves selecting items with the maximum total profit while respecting a weight constraint. Here are the time and space complexities for this code:
+
+1. **Time Complexity:**
+
+   - Sorting the items based on the profit-to-weight ratio: O(n * log(n)), where 'n' is the number of items. Sorting the items is the most time-consuming part of the algorithm.
+   - The loop that goes through the sorted items and makes decisions: O(n), as each item is considered once.
+   
+   The dominant time complexity is the sorting step, O(n * log(n)).
+
+2. **Space Complexity:**
+
+   - The space complexity is O(n) because the input data is stored in the 'arr' list, which contains 'n' items. The other variables used in the code occupy constant space and do not depend on the input size.
+
+Overall, the code has a time complexity of O(n * log(n)) due to the sorting step and a space complexity of O(n) due to the input data storage. This algorithm efficiently solves the Fractional Knapsack problem.

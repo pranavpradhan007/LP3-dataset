@@ -1,0 +1,78 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def knapsack(values, weights, k, i=0, lookup=None):
+    lookup = {} if lookup is None else lookup
+    if (i, k) in lookup:
+        return lookup[(i, k)] 
+    if i == len(values): #base case
+        return 0
+    elif weights[i] > k:  # Ensure the weight of the item doesn't exceed the remaining capacity
+        return knapsack(values, weights, k, i+1, lookup)
+    else: #consider
+        included = values[i] + knapsack(values, weights, k - weights[i], i+1, lookup)
+        not_included = knapsack(values, weights, k, i+1, lookup)
+        lookup[(i, k)] = max(included, not_included) #memoization step, which helps avoid redundant calculations.
+        return lookup[(i, k)]
+
+# Example usage:
+values = [20,30,15,25,10]
+weights = [6,13,5,10,3]
+knapsack_capacity = 20
+
+max_profit = knapsack(values, weights, knapsack_capacity)
+print("Maximum Profit:", max_profit)
+
+
+
+
+
+-----------------
+
+The provided code is an implementation of the 0/1 Knapsack problem using dynamic programming and memoization. Here are the time and space complexities for this code:
+
+1. **Time Complexity:**
+
+   The time complexity of this implementation is O(n * k), where 'n' is the number of items and 'k' is the knapsack capacity. This is because the function uses dynamic programming to solve the problem, and it considers each combination of items and capacities once. The memoization table helps avoid redundant calculations, making it more efficient than the naive recursive approach, which has exponential time complexity.
+
+2. **Space Complexity:**
+
+   The space complexity is O(n * k) as well. The memoization table (`lookup`) is a 2D array of size (n+1) x (k+1), where 'n' represents the number of items and 'k' represents the knapsack capacity. It stores the results of subproblems, and each cell in the table uses constant space. Therefore, the space complexity is O(n * k).
+
+The provided code efficiently solves the 0/1 Knapsack problem by using dynamic programming and memoization, making it a practical approach for larger instances of the problem.

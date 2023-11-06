@@ -1,0 +1,126 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Predict the price of the Uber ride from a given pickup point to the agreed drop-off location. Perform following tasks:
+1. Pre-process the dataset.
+2. Identify outliers.
+4. Initialize and build the model. Identify the points of improvement and implement the same.
+5. Print the accuracy score and confusion matrix 1. Check the correlation. 2. Implement linear regression and random forest regression models. 3. Evaluate the models and compare their respective scores like R2, RMSE, etc. Dataset link: https://www.kaggle.com/datasets/yasserh/uber-fares-dataset
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+df = pd.read_csv('uber.csv')
+
+df.info()
+
+df.head()
+
+df.describe()
+
+df.isnull().sum()
+
+df.corr()
+
+#Drop the rows with missing values
+df.dropna(inplace=True)
+
+df.head()
+
+df.isnull().sum()
+
+#pickup_datetime is not in required data format
+
+df["pickup_datetime"] = pd.to_datetime(df["pickup_datetime"])
+df.info()
+
+# Outliers
+plt.boxplot(df['fare_amount'])
+
+#Remove Outliers
+low = df["fare_amount"].quantile(0.01)
+high  = df["fare_amount"].quantile(0.99)
+
+df = df[(df["fare_amount"] < high) & (df["fare_amount"] > low)]
+
+# Initialize and build the model
+from sklearn.model_selection import train_test_split
+#Take x as predictor variable and y as target variable
+x = df.drop("fare_amount", axis = 1)
+y = df['fare_amount']
+x['pickup_datetime'] = pd.to_numeric(pd.to_datetime(x['pickup_datetime']))
+x = x.loc[:, x.columns.str.contains('^Unnamed')]
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+
+# Initialize and train Linear Regression model
+linear_reg_model = LinearRegression()
+linear_reg_model.fit(X_train, y_train)
+
+# Initialize and train Random Forest Regression model
+rf_model = RandomForestRegressor(random_state=42)
+rf_model.fit(X_train, y_train)
+
+# Predictions
+linear_reg_pred = linear_reg_model.predict(X_test)
+rf_pred = rf_model.predict(X_test)
+
+# Evaluation metrics
+linear_reg_r2 = r2_score(y_test, linear_reg_pred)
+rf_r2 = r2_score(y_test, rf_pred)
+
+linear_reg_rmse = mean_squared_error(y_test, linear_reg_pred, squared=False)
+rf_rmse = mean_squared_error(y_test, rf_pred, squared=False)
+
+# Print evaluation results
+print("Linear Regression R2:", linear_reg_r2)
+print("Linear Regression RMSE:", linear_reg_rmse)
+
+print("Random Forest Regression R2:", rf_r2)
+print("Random Forest Regression RMSE:", rf_rmse)
+
+

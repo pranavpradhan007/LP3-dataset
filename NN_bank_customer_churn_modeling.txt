@@ -1,0 +1,245 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import tensorflow as tf
+import numpy as np
+import tensorflow as tf
+import pandas as pd
+
+Task 1 : Load Dataset Churn_Modelling.csv
+
+bank_data = pd.read_csv("Churn_Modelling.csv")
+bank_data
+
+# Extract feature (x) and target (y) data
+x = bank_data.iloc[:, 3:-1].values  # Features
+y = bank_data.iloc[:, -1].values  # Target variable
+# Print the feature (x) and target (y) data
+print(x)
+print(y)
+
+Task 2 : Perform encoding
+
+# Import LabelEncoder to encode categorical data
+from sklearn.preprocessing import LabelEncoder
+
+# Create a LabelEncoder instance
+le = LabelEncoder()
+
+# Encode the third column (index 2) of the feature data
+x[:, 2] = le.fit_transform(x[:, 2])
+
+# Print the feature data with the categorical column encoded
+print(x)
+
+Task 3 : Perform Transformation
+
+# Import necessary libraries for one-hot encoding
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder
+
+# Create a ColumnTransformer that applies one-hot encoding to the first column (index 1)
+ct = ColumnTransformer(transformers=[('encoder', OneHotEncoder(), [1])], remainder='passthrough')
+
+# Apply the transformation and convert the result to a NumPy array
+x = np.array(ct.fit_transform(x))
+
+# Print the feature data after one-hot encoding
+print(x)
+
+Task 4 : Splitting the data into train and test to perform Normalization
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state = 1)
+
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+# Scaling fitted only to training set to avoid information leakage.
+X_train = sc.fit_transform(X_train)
+X_test = sc.transform(X_test)
+
+# Create a sequential neural network model
+ann = tf.keras.models.Sequential()
+
+# Add layers to the model
+ann.add(tf.keras.layers.Dense(units=6, activation='relu'))  # First hidden layer with ReLU activation
+ann.add(tf.keras.layers.Dense(units=6, activation='relu'))  # Second hidden layer with ReLU activation
+ann.add(tf.keras.layers.Dense(units=1, activation='sigmoid'))  # Output layer with sigmoid activation for binary classification
+
+# 'relu' - codename for rectifier activation function.
+#This code creates a sequential neural network model with two hidden layers of 6 units each and a sigmoid output layer. The sigmoid
+# activation function is used in the output layer because the target variable is binary (0 or 1).
+
+# Compile the model
+ann.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+# Train the model with the training data
+ann.fit(X_train, y_train, batch_size=32, epochs=100)
+
+# Predict a new data point using the trained model and print the result
+print(ann.predict(sc.transform([[1, 0, 0, 600, 1, 40, 3, 60000, 2, 1, 1, 50000]])))
+
+# Make predictions on the testing data
+y_predicted = ann.predict(X_test)
+
+# Convert predicted probabilities into binary outcomes
+y_predicted = (y_predicted > 0.5)
+
+# Combine predicted values and actual values for comparison
+print(np.concatenate((y_predicted.reshape(len(y_predicted),1), y_test.reshape(len(y_test),1)),1))
+
+Task 5 : Evaluating the dataset
+
+from sklearn.metrics import confusion_matrix, accuracy_score
+cm = confusion_matrix(y_test, y_predicted)
+print(cm)
+print("Accuracy: ",accuracy_score(y_test, y_predicted))
+
+loss, accuracy = ann.evaluate(X_test, y_test)
+print(f"Test Loss: {loss}, Test Accuracy: {accuracy}")
+
+
+---------------------------------------------
+
+
+Certainly! I'll explain each part of the code step by step:
+
+**Task 1: Load Dataset Churn_Modelling.csv**
+```python
+import tensorflow as tf
+import numpy as np
+import tensorflow as tf
+import pandas as pd
+
+bank_data = pd.read_csv("Churn_Modelling.csv")
+bank_data
+```
+This section imports necessary libraries, including TensorFlow, NumPy, and Pandas, and reads a CSV file named "Churn_Modelling.csv" into a Pandas DataFrame called `bank_data`.
+
+**Task 2: Perform encoding**
+```python
+# Extract feature (x) and target (y) data
+x = bank_data.iloc[:, 3:-1].values  # Features
+y = bank_data.iloc[:, -1].values  # Target variable
+
+# Import LabelEncoder to encode categorical data
+from sklearn.preprocessing import LabelEncoder
+
+# Create a LabelEncoder instance
+le = LabelEncoder()
+
+# Encode the third column (index 2) of the feature data
+x[:, 2] = le.fit_transform(x[:, 2])
+```
+In this part, the features (x) are extracted from the DataFrame, and the target variable (y) is separated. The third column (index 2) of the feature data, which contains categorical data, is encoded using a LabelEncoder. This is done to convert categorical values into numerical values for modeling.
+
+**Task 3: Perform Transformation**
+```python
+# Import necessary libraries for one-hot encoding
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder
+
+# Create a ColumnTransformer that applies one-hot encoding to the first column (index 1)
+ct = ColumnTransformer(transformers=[('encoder', OneHotEncoder(), [1])], remainder='passthrough')
+
+# Apply the transformation and convert the result to a NumPy array
+x = np.array(ct.fit_transform(x))
+```
+Here, one-hot encoding is performed on the first column (index 1) of the feature data using a `ColumnTransformer`. This is used when dealing with categorical data with multiple categories. The result is converted to a NumPy array, incorporating one-hot encoding for that specific column.
+
+**Task 4: Splitting the data into train and test to perform Normalization**
+```python
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=1)
+
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+X_train = sc.fit_transform(X_train)
+X_test = sc.transform(X_test)
+
+# Create a sequential neural network model (ANN)
+ann = tf.keras.models.Sequential()
+
+# Add layers to the model
+ann.add(tf.keras.layers.Dense(units=6, activation='relu'))
+ann.add(tf.keras.layers.Dense(units=6, activation='relu'))
+ann.add(tf.keras.layers.Dense(units=1, activation='sigmoid'))
+
+# Compile the model
+ann.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+# Train the model with the training data
+ann.fit(X_train, y_train, batch_size=32, epochs=100)
+```
+In this section, the data is split into training and testing sets using `train_test_split`. Standardization (feature scaling) is performed on both training and testing data using `StandardScaler`.
+
+A sequential neural network (ANN) is created using TensorFlow's Keras API. It consists of two hidden layers with ReLU activation functions and an output layer with a sigmoid activation function, which is suitable for binary classification tasks. The model is compiled with the Adam optimizer and binary cross-entropy loss.
+
+The model is then trained with the training data using 100 epochs and a batch size of 32.
+
+**Task 5: Evaluating the dataset**
+```python
+# Predict a new data point using the trained model and print the result
+print(ann.predict(sc.transform([[1, 0, 0, 600, 1, 40, 3, 60000, 2, 1, 1, 50000]]))
+
+# Make predictions on the testing data
+y_predicted = ann.predict(X_test)
+y_predicted = (y_predicted > 0.5)  # Convert predicted probabilities into binary outcomes
+
+# Combine predicted values and actual values for comparison
+print(np.concatenate((y_predicted.reshape(len(y_predicted), 1), y_test.reshape(len(y_test), 1)), 1))
+
+# Evaluate the model
+from sklearn.metrics import confusion_matrix, accuracy_score
+cm = confusion_matrix(y_test, y_predicted)
+print("Confusion Matrix:")
+print(cm)
+print("Accuracy:", accuracy_score(y_test, y_predicted))
+
+loss, accuracy = ann.evaluate(X_test, y_test)
+print(f"Test Loss: {loss}, Test Accuracy: {accuracy}")
+```
+In this section, the trained model is used to predict a new data point, and the result is printed. Then, predictions are made on the testing data, and a threshold of 0.5 is applied to convert the predicted probabilities into binary outcomes.
+
+The confusion matrix and accuracy of the model are calculated and printed. Additionally, the test loss and test accuracy of the model are evaluated and displayed.
+
+This code demonstrates a typical workflow for data preprocessing, building, training, and evaluating a neural network model for binary classification using TensorFlow and scikit-learn.

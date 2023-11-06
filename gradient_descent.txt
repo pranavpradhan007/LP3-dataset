@@ -1,0 +1,219 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import matplotlib as plot
+import numpy as np
+import sympy as sym
+from matplotlib import pyplot
+#dont do sympy
+
+def objective(x):
+  return (x+3)**2
+
+def derivative(x):
+  return 2*(x + 3)
+
+def gradient_descent(alpha, start, max_iter):
+  x_list = list()
+  x= start;
+  x_list.append(x)
+  for i in range(max_iter):
+    gradient = derivative(x);
+    x = x - (alpha*gradient);
+    x_list.append(x);
+  return x_list
+
+x = sym.symbols('x') 
+expr = (x+3)**2.0; # Define the target function using SymPy
+# Calculate the derivative of the target function
+grad = sym.Derivative(expr,x)
+print("{}".format(grad.doit()) )
+grad.doit().subs(x,2) #used to compute the derivative of the function expr with respect to the variable x, and then to substitute the value x = 2 into the resulting expression to obtain the derivative's value at x = 2
+
+# Define another gradient descent function that uses SymPy for symbolic calculations
+def gradient_descent1(expr,alpha, start, max_iter):
+  x_list = list()
+  x = sym.symbols('x')
+  grad = sym.Derivative(expr,x).doit()
+  x_val= start;
+  x_list.append(x_val)
+  for i in range(max_iter):
+    gradient = grad.subs(x,x_val);
+    x_val = x_val - (alpha*gradient);
+    x_list.append(x_val);
+  return x_list
+
+alpha = 0.1       #Step_size
+start = 2         #Starting point
+max_iter = 30     #Limit on iterations
+x = sym.symbols('x')
+expr = (x+3)**2;   #target function
+
+x_cordinate = np.linspace(-15,15,100)
+pyplot.plot(x_cordinate,objective(x_cordinate))
+pyplot.plot(2,objective(2),'ro')
+pyplot.show()
+
+X = gradient_descent(alpha,start,max_iter)
+
+x_cordinate = np.linspace(-5,5,100)
+pyplot.plot(x_cordinate,objective(x_cordinate))
+
+X_arr = np.array(X)
+pyplot.plot(X_arr, objective(X_arr), '.-', color='red')
+pyplot.show()
+
+X= gradient_descent1(expr,alpha,start,max_iter)
+X_arr = np.array(X)
+
+x_cordinate = np.linspace(-5,5,100)
+pyplot.plot(x_cordinate,objective(x_cordinate))
+
+X_arr = np.array(X)
+pyplot.plot(X_arr, objective(X_arr), '.-', color='red')
+pyplot.show()
+
+# Hyperparameters
+learning_rate = 0.1  # The step size for each iteration
+num_iterations = 30  # Number of iterations
+
+# Gradient Descent Algorithm
+for i in range(num_iterations):
+    # Compute the gradient at the current point
+    grad = derivative(x)
+    
+    # Update x using the gradient descent formula
+    x = x - learning_rate * grad
+    
+    # Calculate the value of the function at the updated x
+    y = objective(x)
+    
+    # Print the current iteration and the updated x and y values
+    print(f'Iteration {i + 1}: x = {x}, y = {y}')
+
+# The final result after the iterations
+print(f'Local minimum occurs at x = {x}, y = {y}')
+
+---------------------
+
+This code demonstrates the implementation of gradient descent to find the local minimum of a simple quadratic function and visualizes the process. It uses both symbolic and numeric calculations. Here's an explanation of the code step by step:
+
+1. Importing Libraries:
+   ```python
+   import matplotlib as plot
+   import numpy as np
+   import sympy as sym
+   from matplotlib import pyplot
+   ```
+   This section imports the necessary libraries for plotting, numerical operations, symbolic math, and visualization using Matplotlib.
+
+2. Objective Function and Derivative:
+   ```python
+   def objective(x):
+       return (x + 3) ** 2
+
+   def derivative(x):
+       return 2 * (x + 3)
+   ```
+   These functions define the objective function, which is a simple quadratic function `(x + 3)^2`, and its derivative. The derivative is used to calculate the gradient of the function at a given point.
+
+3. Gradient Descent Implementation (Numeric):
+   ```python
+   def gradient_descent(alpha, start, max_iter):
+       x_list = list()
+       x = start
+       x_list.append(x)
+       for i in range(max_iter):
+           gradient = derivative(x)
+           x = x - (alpha * gradient)
+           x_list.append(x)
+       return x_list
+   ```
+   This function, `gradient_descent`, performs gradient descent using numeric calculations. It takes parameters such as the learning rate `alpha`, the starting point `start`, and the maximum number of iterations `max_iter`. It iteratively updates the `x` value based on the gradient of the objective function.
+
+4. Symbolic Gradient Calculation:
+   ```python
+   x = sym.symbols('x')
+   expr = (x + 3) ** 2.0
+   grad = sym.Derivative(expr, x)
+   print("{}".format(grad.doit()))
+   ```
+   This section defines the objective function symbolically and calculates its derivative using SymPy. The derivative is printed. It also calculates the value of the derivative at a specific point, in this case, when `x` is equal to 2.
+
+5. Gradient Descent Implementation (Symbolic):
+   ```python
+   def gradient_descent1(expr, alpha, start, max_iter):
+       x_list = list()
+       x = sym.symbols('x')
+       grad = sym.Derivative(expr, x).doit()
+       x_val = start
+       x_list.append(x_val)
+       for i in range(max_iter):
+           gradient = grad.subs(x, x_val)
+           x_val = x_val - (alpha * gradient)
+           x_list.append(x_val)
+       return x_list
+   ```
+   This function, `gradient_descent1`, performs gradient descent using symbolic calculations. It takes parameters similar to the numeric version but also accepts the symbolic expression `expr`. It calculates the gradient symbolically and then substitutes the value of `x` at each iteration to update `x`.
+
+6. Hyperparameters and Gradient Descent Algorithm (Numeric):
+   ```python
+   learning_rate = 0.1
+   num_iterations = 30
+   for i in range(num_iterations):
+       grad = derivative(x)
+       x = x - learning_rate * grad
+       y = objective(x)
+       print(f'Iteration {i + 1}: x = {x}, y = {y}')
+   ```
+   This section demonstrates gradient descent using numeric calculations with hyperparameters. It iteratively computes the gradient, updates `x`, and calculates the function value at each iteration.
+
+7. Visualizing Gradient Descent (Numeric and Symbolic):
+   The code visualizes the gradient descent process for both numeric and symbolic approaches.
+
+   - For the numeric approach, it creates plots of the objective function and shows the path of `x` values as it converges to the minimum.
+   - For the symbolic approach, it does the same but uses symbolic calculations for the gradient.
+
+8. Final Result:
+   After gradient descent iterations, it prints the local minimum's coordinates (x and y) found by the algorithm.
+
+This code provides an illustrative example of gradient descent optimization using both numeric and symbolic methods and visualizes the process.

@@ -1,0 +1,139 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract BankAccount {
+    address public owner;
+    uint256 public balance;
+
+    constructor() {
+        owner = msg.sender;
+        balance = 0;
+    }
+
+    modifier onlyOwner {
+        require(msg.sender == owner, "Only the owner can perform this operation");
+        _;
+    }
+
+    function deposit(uint256 amount) public onlyOwner {
+        require(amount > 0, "Amount must be greater than 0");
+        balance += amount;
+    }
+
+    function withdraw(uint256 amount) public onlyOwner {
+        require(amount > 0, "Amount must be greater than 0");
+        require(amount <= balance, "Insufficient balance");
+        balance -= amount;
+    }
+
+    function getBalance() public view returns (uint256) {
+        return balance;
+    }
+}
+
+
+Sure, I'd be happy to explain the provided Solidity code line by line:
+
+1. `// SPDX-License-Identifier: MIT`
+   - This is a comment indicating the license under which the code is released. In this case, it uses the MIT license, which is a permissive open-source license.
+
+2. `pragma solidity ^0.8.0;`
+   - This is a compiler directive specifying the version of the Solidity compiler to use. It tells the compiler to use a version greater than or equal to 0.8.0. Solidity is the programming language used to write smart contracts on the Ethereum blockchain.
+
+3. `contract BankAccount {`
+   - This line defines the start of a Solidity contract named "BankAccount."
+
+4. `address public owner;`
+   - This declares a state variable named `owner` of type `address`. State variables store data that can be accessed and modified throughout the life of the contract. The `public` visibility modifier means that the `owner` variable can be read by anyone.
+
+5. `uint256 public balance;`
+   - This declares another state variable named `balance` of type `uint256` (an unsigned integer). It will store the balance of the bank account, and like `owner`, it is publicly readable.
+
+6. `constructor() {`
+   - This marks the beginning of the constructor function. The constructor is a special function that is executed only once when the contract is deployed.
+
+7. `owner = msg.sender;`
+   - In the constructor, this line sets the `owner` variable to the Ethereum address of the account that deploys the contract. `msg.sender` is a predefined variable that represents the sender (i.e., the account that initiated the contract deployment).
+
+8. `balance = 0;`
+   - This line initializes the `balance` variable to 0 when the contract is deployed.
+
+9. `modifier onlyOwner {`
+   - This line defines a modifier called `onlyOwner`. Modifiers are used to change the behavior of functions. In this case, the `onlyOwner` modifier is used to restrict certain functions to only be callable by the owner of the contract.
+
+10. `require(msg.sender == owner, "Only the owner can perform this operation");`
+    - Inside the `onlyOwner` modifier, this line checks if the sender of the transaction (i.e., `msg.sender`) is the same as the `owner`. If they are not the same, it will revert the transaction with the specified error message.
+
+11. `_;`
+    - This underscores `_` is a special placeholder indicating where the modified function's code will be executed.
+
+12. `function deposit(uint256 amount) public onlyOwner {`
+    - This line defines a function named `deposit` that accepts an `amount` of type `uint256` as a parameter. The function is marked as `public`, which means it can be called by anyone, but it also has the `onlyOwner` modifier, ensuring that only the owner can execute this function.
+
+13. `require(amount > 0, "Amount must be greater than 0");`
+    - This line checks if the `amount` is greater than 0, and if not, it reverts the transaction with the specified error message.
+
+14. `balance += amount;`
+    - This line increases the `balance` variable by the `amount` provided.
+
+15. `function withdraw(uint256 amount) public onlyOwner {`
+    - Similar to the `deposit` function, this line defines a `withdraw` function, but it allows the owner to withdraw funds from the bank account.
+
+16. `require(amount > 0, "Amount must be greater than 0");`
+    - Just like in the `deposit` function, this line checks if the `amount` is greater than 0.
+
+17. `require(amount <= balance, "Insufficient balance");`
+    - This line checks if the `amount` to withdraw is less than or equal to the current `balance`. If not, it reverts the transaction with the specified error message.
+
+18. `balance -= amount;`
+    - If both `require` conditions are met, this line subtracts the `amount` from the `balance`.
+
+19. `function getBalance() public view returns (uint256) {`
+    - This line defines a function named `getBalance`, which is a read-only function marked as `view`. It returns the current balance as a `uint256`.
+
+20. `return balance;`
+    - In the `getBalance` function, this line returns the current balance as the result of the function.
+
+The provided Solidity code creates a simple smart contract for a bank account, allowing the owner to deposit and withdraw funds while keeping track of the account balance. The owner is set in the constructor, and the `onlyOwner` modifier restricts specific operations to only the owner of the contract.

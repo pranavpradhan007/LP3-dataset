@@ -1,0 +1,245 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score
+
+df=pd.read_csv("diabetes.csv")
+df.head()
+
+df.shape
+
+df.describe()
+
+Preprocessing the dataset
+
+#replace zeros
+zero_not_accepted=["Glucose","BloodPressure","SkinThickness","BMI","Insulin"]
+for column in zero_not_accepted:
+    df[column]=df[column].replace(0,np.NaN)
+    mean=int(df[column].mean(skipna=True))
+    df[column]=df[column].replace(np.NaN,mean)
+
+df["Glucose"]
+
+#split dataset
+X=df.iloc[:,0:8]
+y=df.iloc[:,8]
+X_train,X_test,y_train,y_test=train_test_split(X,y,random_state=0,test_size=0.2)
+
+# Standardize the features
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+k = 11
+classifier = KNeighborsClassifier(n_neighbors=k)
+classifier.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = classifier.predict(X_test)
+
+# Compute the confusion matrix
+cm = confusion_matrix(y_test, y_pred)
+print("Confusion Matrix:")
+print(cm)
+
+ax = sns.heatmap(cm, annot=True, cmap='Blues')
+
+ax.set_title('Seaborn Confusion Matrix with labels\n\n');
+ax.set_xlabel('\nPredicted Values')
+ax.set_ylabel('Actual Values ');
+
+
+## Display the visualization of the Confusion Matrix.
+plt.show()
+
+# Calculate accuracy
+accuracy = accuracy_score(y_test, y_pred)
+print("Accuracy:", accuracy)
+
+# Calculate error rate
+error_rate = 1 - accuracy
+print("Error Rate:", error_rate)
+
+# Calculate precision
+precision = precision_score(y_test, y_pred)
+print("Precision:", precision)
+
+# Calculate recall (sensitivity)
+recall = recall_score(y_test, y_pred)
+print("Recall:", recall)
+
+--------------------------
+
+This code performs the classification of diabetes using the k-nearest neighbors (KNN) algorithm. Here's an explanation of each part of the code:
+
+1. Importing Libraries:
+   ```python
+   import numpy as np
+   import pandas as pd
+   import seaborn as sns
+   import matplotlib.pyplot as plt
+   from sklearn.model_selection import train_test_split
+   from sklearn.preprocessing import StandardScaler
+   from sklearn.neighbors import KNeighborsClassifier
+   from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score
+   ```
+   These libraries are imported to perform data manipulation, visualization, splitting the data, preprocessing, KNN classification, and evaluation.
+
+2. Loading the Dataset:
+   ```python
+   df = pd.read_csv("diabetes.csv")
+   df.head()
+   ```
+   The code reads a dataset from a CSV file named "diabetes.csv" into a Pandas DataFrame and displays the first few rows to get an initial look at the data.
+
+3. Dataset Information:
+   ```python
+   df.shape
+   df.describe()
+   ```
+   These lines provide information about the dataset, including its dimensions (number of rows and columns) and statistical summary statistics for each numerical feature.
+
+4. Preprocessing the Dataset:
+   - Replacing Zeros:
+     ```python
+     zero_not_accepted = ["Glucose", "BloodPressure", "SkinThickness", "BMI", "Insulin"]
+     for column in zero_not_accepted:
+         df[column] = df[column].replace(0, np.NaN)
+         mean = int(df[column].mean(skipna=True))
+         df[column] = df[column].replace(np.NaN, mean)
+     ```
+     This section replaces zero values in specific columns (Glucose, BloodPressure, SkinThickness, BMI, Insulin) with NaN (Not-a-Number) and then imputes these NaN values with the mean of each respective column. This step helps handle missing or zero values.
+
+   - Splitting the Dataset:
+     ```python
+     X = df.iloc[:, 0:8]
+     y = df.iloc[:, 8]
+     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0, test_size=0.2)
+     ```
+     The dataset is split into features (X) and the target variable (y). It is further divided into training and testing sets using the `train_test_split` function. The training set comprises 80% of the data, and the random_state ensures reproducibility.
+
+   - Standardizing Features:
+     ```python
+     scaler = StandardScaler()
+     X_train = scaler.fit_transform(X_train)
+     X_test = scaler.transform(X_test)
+     ```
+     The features are standardized using `StandardScaler` to ensure they have a mean of 0 and a standard deviation of 1. Standardization is crucial for KNN and many other machine learning algorithms.
+
+5. K-Nearest Neighbors Classification:
+   ```python
+   k = 11
+   classifier = KNeighborsClassifier(n_neighbors=k)
+   classifier.fit(X_train, y_train)
+   ```
+   A KNN classifier is created with `k = 11` neighbors, and it is trained on the standardized training data.
+
+6. Making Predictions and Creating the Confusion Matrix:
+   ```python
+   y_pred = classifier.predict(X_test)
+   cm = confusion_matrix(y_test, y_pred)
+   ```
+   The code uses the trained KNN model to make predictions on the test set. It then calculates the confusion matrix to assess the model's performance in classifying the data.
+
+7. Visualization Using Seaborn:
+   ```python
+   ax = sns.heatmap(cm, annot=True, cmap='Blues')
+   ax.set_title('Seaborn Confusion Matrix with labels\n\n')
+   ax.set_xlabel('\nPredicted Values')
+   ax.set_ylabel('Actual Values ')
+   plt.show()
+   ```
+   The code uses Seaborn to create a heatmap of the confusion matrix with labels. This visualization provides an easy-to-interpret representation of the model's performance.
+
+8. Model Evaluation Metrics:
+   ```python
+   accuracy = accuracy_score(y_test, y_pred)
+   error_rate = 1 - accuracy
+   precision = precision_score(y_test, y_pred)
+   recall = recall_score(y_test, y_pred)
+   ```
+   The code calculates several important classification evaluation metrics:
+   - Accuracy: The proportion of correctly classified instances.
+   - Error Rate: The proportion of misclassified instances.
+   - Precision: The ability of the classifier to not label a negative sample as positive.
+   - Recall (Sensitivity): The ability of the classifier to find all the positive samples.
+
+The code provides a comprehensive example of preprocessing, classification, and evaluation of a machine learning model using K-nearest neighbors for a diabetes dataset.
+
+
+K-Nearest Neighbors (KNN) is a simple and widely used machine learning algorithm for classification and regression tasks. It is a non-parametric and instance-based algorithm, which means it doesn't make any assumptions about the underlying data distribution and stores the entire dataset in memory.
+
+Here's how the KNN algorithm works:
+
+1. **Training Phase**:
+   - KNN doesn't have a traditional training phase as many other algorithms do. Instead, it simply memorizes the entire training dataset.
+
+2. **Prediction (Classification)**:
+   - To classify a new data point, KNN calculates the distance (typically Euclidean distance) between the new data point and all data points in the training dataset.
+   - It selects the K nearest data points (neighbors) based on the calculated distances, where K is a user-defined hyperparameter.
+   - It assigns the class label that is most common among these K neighbors to the new data point. For example, in a binary classification problem, if the majority of the K neighbors belong to class A, the new data point will be assigned to class A.
+
+3. **Prediction (Regression)**:
+   - For regression tasks, KNN doesn't assign class labels but instead predicts a numeric value. It calculates the average or weighted average of the target values of the K nearest neighbors and assigns this as the prediction for the new data point.
+
+Key characteristics of the KNN algorithm:
+
+- **Hyperparameter K**: The choice of K (number of neighbors) is crucial in KNN. Smaller values of K make the model more sensitive to noise in the data, while larger values of K make the decision boundary smoother but might lead to underfitting.
+
+- **Distance Metric**: The choice of the distance metric, such as Euclidean distance, Manhattan distance, or others, influences how KNN calculates distances between data points.
+
+- **Standardization**: It's important to standardize or normalize features when using KNN, as the algorithm relies on distances, and features with different scales can lead to misleading results.
+
+- **Computational Cost**: KNN can be computationally expensive, especially for large datasets, as it involves calculating distances for each new data point against all training data points. Various optimization techniques, like KD-trees or Ball trees, can be used to speed up the search for nearest neighbors.
+
+KNN is a simple and intuitive algorithm and can be effective for various tasks, but it has some limitations, such as sensitivity to the choice of K, the curse of dimensionality (performance degrades as the number of features increases), and computational cost for large datasets. It's often used as a baseline model for classification problems and can be combined with other techniques to improve performance.

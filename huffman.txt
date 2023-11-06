@@ -1,0 +1,135 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# A Huffman Tree Node
+import heapq
+
+class node:
+	def __init__(self, freq, symbol, left=None, right=None):
+		# frequency of symbol
+		self.freq = freq
+
+		# symbol name (character)
+		self.symbol = symbol
+
+		# node left of current node
+		self.left = left
+
+		# node right of current node
+		self.right = right
+
+		# tree direction (0/1)
+		self.huff = ''
+
+	def __lt__(self, nxt):
+		return self.freq < nxt.freq
+
+
+# utility function to print huffman codes for all symbols in the newly created Huffman tree
+def printNodes(node, val=''):
+
+	# huffman code for current node
+	newVal = val + str(node.huff)
+
+	# if node is not an edge node, then traverse inside it
+	if(node.left):
+		printNodes(node.left, newVal)
+	if(node.right):
+		printNodes(node.right, newVal)
+
+	# if node is edge node then display its huffman code
+	if(not node.left and not node.right):
+		print(f"{node.symbol} -> {newVal}")
+
+
+# characters for huffman tree
+chars = ['a', 'b', 'c', 'd', 'e', 'f']
+
+# frequency of characters
+freq = [5, 9, 11, 13, 18, 45]
+
+# list containing unused nodes
+nodes = []
+
+# converting characters and frequencies into huffman tree nodes
+for x in range(len(chars)):
+	heapq.heappush(nodes, node(freq[x], chars[x]))
+
+while len(nodes) > 1:
+
+	# sort all the nodes in ascending order based on their frequency
+	left = heapq.heappop(nodes)
+	right = heapq.heappop(nodes)
+
+	# assign directional value to these nodes
+	left.huff = 0
+	right.huff = 1
+
+	# combine the 2 smallest nodes to create new node as their parent
+	newNode = node(left.freq+right.freq, left.symbol+right.symbol, left, right)
+
+	heapq.heappush(nodes, newNode)
+
+# Huffman Tree is ready!
+printNodes(nodes[0])
+
+------------------------
+
+The provided code implements the construction of a Huffman Tree for a set of characters and their respective frequencies. It then prints the Huffman codes for each character. Here are the time and space complexities for this code:
+
+1. **Time Complexity:**
+
+   - Building the initial heap of nodes: O(n), where n is the number of characters.
+   - Constructing the Huffman Tree: O(n * log(n)), where n is the number of characters. This is because in each iteration, you pop two nodes from the heap and insert one back, which requires log(n) operations.
+   - Printing Huffman codes for all characters: O(n), as each character's code is printed once.
+
+   The dominant time complexity is the construction of the Huffman Tree (O(n * log(n))).
+
+2. **Space Complexity:**
+
+   - Storing the nodes in the heap: O(n), as there are 'n' characters in the input.
+   - Additional space for the Huffman Tree nodes and their structure: O(n), because you have 'n' nodes in the final Huffman Tree.
+   - The recursive call stack during tree traversal for printing: O(n), as it can go as deep as the height of the Huffman Tree.
+
+   The dominant space complexity is also O(n).
+
+Overall, the code is efficient in terms of time and space complexity for constructing a Huffman Tree and generating Huffman codes for a given set of characters and their frequencies.
